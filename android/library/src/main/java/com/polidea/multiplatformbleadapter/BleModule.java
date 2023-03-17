@@ -42,6 +42,7 @@ import com.polidea.rxandroidble.scan.ScanFilter;
 import com.polidea.rxandroidble.scan.ScanSettings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -1479,7 +1480,7 @@ public class BleModule implements BleAdapter {
         if (connection == null) {
             return;
         }
-        Log.v(TAG, "gattCharacteristic:", characteristic.gattCharacteristic);
+        Log.v(TAG, "gattCharacteristic:" + characteristic.gattCharacteristic);
 
         final SafeExecutor<Characteristic> safeExecutor = new SafeExecutor<>(onSuccessCallback, onErrorCallback);
 
@@ -1506,7 +1507,7 @@ public class BleModule implements BleAdapter {
 
                     @Override
                     public void onNext(byte[] bytes) {
-                        Log.v(TAG, "gattCharacteristic:", bytes.toString());
+                        Log.v(TAG, "gattCharacteristic:" + Arrays.toString(bytes));
 
                         characteristic.logValue("Read from", bytes);
                         characteristic.setValue(bytes);
