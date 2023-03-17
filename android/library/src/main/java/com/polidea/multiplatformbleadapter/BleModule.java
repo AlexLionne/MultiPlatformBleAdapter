@@ -12,6 +12,7 @@ import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.polidea.multiplatformbleadapter.errors.BleError;
@@ -58,7 +59,7 @@ import rx.schedulers.Schedulers;
 import static com.polidea.multiplatformbleadapter.utils.Constants.BluetoothState;
 
 public class BleModule implements BleAdapter {
-
+    private static final String TAG = "ADV_TEST";
     private final ErrorConverter errorConverter = new ErrorConverter();
 
     @Nullable
@@ -633,10 +634,15 @@ public class BleModule implements BleAdapter {
                                    String transactionId,
                                    OnSuccessCallback<Characteristic> onSuccessCallback,
                                    OnErrorCallback onErrorCallback) {
+        Log.v(TAG, "Reading characteristic");
+        Log.v(TAG, "characteristicIdentifier: " + characteristicIdentifier);
+        Log.v(TAG, "transactionId: " + transactionId);
+
         final Characteristic characteristic = getCharacteristicOrEmitError(characteristicIdentifier, onErrorCallback);
         if (characteristic == null) {
             return;
         }
+        Log.v(TAG, "Characteristic is :" + characteristic.toString());
 
         safeReadCharacteristicForDevice(characteristic, transactionId, onSuccessCallback, onErrorCallback);
     }
@@ -1270,6 +1276,8 @@ public class BleModule implements BleAdapter {
     private RxBleConnection getConnectionOrEmitError(@NonNull final String deviceId,
                                                      @NonNull OnErrorCallback onErrorCallback) {
         final RxBleConnection connection = activeConnections.get(deviceId);
+        Log.v(TAG, "getConnectionOrEmitError");
+
         if (connection == null) {
             onErrorCallback.onError(BleErrorUtils.deviceNotConnected(deviceId));
             return null;
@@ -1466,10 +1474,12 @@ public class BleModule implements BleAdapter {
                                                  final String transactionId,
                                                  final OnSuccessCallback<Characteristic> onSuccessCallback,
                                                  final OnErrorCallback onErrorCallback) {
+        Log.v(TAG, "safeReadCharacteristicForDevice");
         final RxBleConnection connection = getConnectionOrEmitError(characteristic.getDeviceId(), onErrorCallback);
         if (connection == null) {
             return;
         }
+        Log.v(TAG, "gattCharacteristic:", characteristic.gattCharacteristic);
 
         final SafeExecutor<Characteristic> safeExecutor = new SafeExecutor<>(onSuccessCallback, onErrorCallback);
 
@@ -1496,6 +1506,8 @@ public class BleModule implements BleAdapter {
 
                     @Override
                     public void onNext(byte[] bytes) {
+                        Log.v(TAG, "gattCharacteristic:", bytes.toString());
+
                         characteristic.logValue("Read from", bytes);
                         characteristic.setValue(bytes);
                         safeExecutor.success(new Characteristic(characteristic));
@@ -1589,23 +1601,23 @@ public class BleModule implements BleAdapter {
         final SafeExecutor<Void> safeExecutor = new SafeExecutor<>(null, onErrorCallback);
 
         final Subscription subscription = Observable.defer(new Func0<Observable<Observable<byte[]>>>() {
-            @Override
-            public Observable<Observable<byte[]>> call() {
-                BluetoothGattDescriptor cccDescriptor = characteristic.getGattDescriptor(Constants.CLIENT_CHARACTERISTIC_CONFIG_UUID);
-                NotificationSetupMode setupMode = cccDescriptor != null
-                        ? NotificationSetupMode.QUICK_SETUP
-                        : NotificationSetupMode.COMPAT;
-                if (characteristic.isNotifiable()) {
-                    return connection.setupNotification(characteristic.gattCharacteristic, setupMode);
-                }
+                    @Override
+                    public Observable<Observable<byte[]>> call() {
+                        BluetoothGattDescriptor cccDescriptor = characteristic.getGattDescriptor(Constants.CLIENT_CHARACTERISTIC_CONFIG_UUID);
+                        NotificationSetupMode setupMode = cccDescriptor != null
+                                ? NotificationSetupMode.QUICK_SETUP
+                                : NotificationSetupMode.COMPAT;
+                        if (characteristic.isNotifiable()) {
+                            return connection.setupNotification(characteristic.gattCharacteristic, setupMode);
+                        }
 
-                if (characteristic.isIndicatable()) {
-                    return connection.setupIndication(characteristic.gattCharacteristic, setupMode);
-                }
+                        if (characteristic.isIndicatable()) {
+                            return connection.setupIndication(characteristic.gattCharacteristic, setupMode);
+                        }
 
-                return Observable.error(new CannotMonitorCharacteristicException(characteristic));
-            }
-        })
+                        return Observable.error(new CannotMonitorCharacteristicException(characteristic));
+                    }
+                })
                 .flatMap(new Func1<Observable<byte[]>, Observable<byte[]>>() {
                     @Override
                     public Observable<byte[]> call(Observable<byte[]> observable) {
