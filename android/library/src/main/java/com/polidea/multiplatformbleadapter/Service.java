@@ -4,12 +4,14 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Service {
+    private static final String TAG = "ADV_TEST";
 
     final private int id;
     final private String deviceID;
@@ -40,7 +42,8 @@ public class Service {
     @Nullable
     public Characteristic getCharacteristicByUUID(@NonNull UUID uuid) {
         BluetoothGattCharacteristic characteristic = btGattService.getCharacteristic(uuid);
-        if (characteristic == null) return null;
+        Log.v(TAG, "BluetoothGattCharacteristic" + characteristic.toString());
+
         return new Characteristic(this, characteristic);
     }
 

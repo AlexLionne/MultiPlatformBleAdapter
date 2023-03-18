@@ -640,9 +640,7 @@ public class BleModule implements BleAdapter {
         Log.v(TAG, "transactionId: " + transactionId);
 
         final Characteristic characteristic = getCharacteristicOrEmitError(characteristicIdentifier, onErrorCallback);
-        if (characteristic == null) {
-            return;
-        }
+      
         Log.v(TAG, "Characteristic is :" + characteristic.toString());
 
         safeReadCharacteristicForDevice(characteristic, transactionId, onSuccessCallback, onErrorCallback);
@@ -1664,23 +1662,25 @@ public class BleModule implements BleAdapter {
                                                         @NonNull final OnErrorCallback onErrorCallback) {
 
         final UUID[] UUIDs = UUIDConverter.convert(serviceUUID, characteristicUUID);
-        if (UUIDs == null) {
-            onErrorCallback.onError(BleErrorUtils.invalidIdentifiers(serviceUUID, characteristicUUID));
-            return null;
-        }
+        Log.v(TAG, "getCharacteristicOrEmitError");
+        Log.v(TAG, "Device id" + deviceId);
+        Log.v(TAG, "Service" + serviceUUID);
+        Log.v(TAG, "Characteristic" + characteristicUUID);
+        Log.v(TAG, "Converted UUIDs" + UUIDs.toString());
 
         final Device device = connectedDevices.get(deviceId);
-        if (device == null) {
-            onErrorCallback.onError(BleErrorUtils.deviceNotConnected(deviceId));
-            return null;
-        }
+                Log.v(TAG, "Connected Device" + device.toString());
+
+        Log.v(TAG, "getServiceByUUID" + UUIDs[0]);
 
         final Service service = device.getServiceByUUID(UUIDs[0]);
+
         if (service == null) {
             onErrorCallback.onError(BleErrorUtils.serviceNotFound(serviceUUID));
             return null;
         }
 
+ Log.v(TAG, "getCharacteristicByUUID" + UUIDs[1]);
         final Characteristic characteristic = service.getCharacteristicByUUID(UUIDs[1]);
         if (characteristic == null) {
             onErrorCallback.onError(BleErrorUtils.characteristicNotFound(characteristicUUID));
