@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/AlexLionne/MultiPlatformBleAdapter.svg)](https://jitpack.io/#AlexLionne/MultiPlatformBleAdapter)
+
 # MultiPlatformBleAdapter
 
 Middle layer between crossplatform BLE libraries ([react-native-ble-plx](https://github.com/Polidea/react-native-ble-plx)
