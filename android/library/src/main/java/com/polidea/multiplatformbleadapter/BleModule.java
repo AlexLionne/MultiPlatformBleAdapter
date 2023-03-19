@@ -623,9 +623,15 @@ public class BleModule implements BleAdapter {
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
         Log.v(TAG, "readCharacteristicForService");
+        Log.v(TAG, "readCharacteristicForService" + serviceIdentifier);
+        Log.v(TAG, "readCharacteristicForService" + characteristicUUID);
+        Log.v(TAG, "readCharacteristicForService" + transactionId);
 
         final Characteristic characteristic = getCharacteristicOrEmitError(
                 serviceIdentifier, characteristicUUID, onErrorCallback);
+
+        Log.v(TAG, "readCharacteristicForService" + characteristic);
+
         if (characteristic == null) {
             return;
         }
@@ -1698,19 +1704,28 @@ public class BleModule implements BleAdapter {
                                                         @NonNull final String characteristicUUID,
                                                         @NonNull final OnErrorCallback onErrorCallback) {
 
+        Log.v(TAG, "getCharacteristicOrEmitError");
+        Log.v(TAG, "UUIDConverter > " + characteristicUUID);
         final UUID uuid = UUIDConverter.convert(characteristicUUID);
+        Log.v(TAG, "UUIDConverter > " + uuid);
+
         if (uuid == null) {
             onErrorCallback.onError(BleErrorUtils.invalidIdentifiers(characteristicUUID));
             return null;
         }
 
         final Service service = discoveredServices.get(serviceIdentifier);
+        Log.v(TAG, "discoveredServices > " + discoveredServices.toString());
+        Log.v(TAG, "discoveredServices > " + service);
+
         if (service == null) {
             onErrorCallback.onError(BleErrorUtils.serviceNotFound(Integer.toString(serviceIdentifier)));
             return null;
         }
 
         final Characteristic characteristic = service.getCharacteristicByUUID(uuid);
+        Log.v(TAG, "getCharacteristicByUUID > " + characteristic);
+
         if (characteristic == null) {
             onErrorCallback.onError(BleErrorUtils.characteristicNotFound(characteristicUUID));
             return null;
