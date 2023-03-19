@@ -1492,7 +1492,7 @@ public class BleModule implements BleAdapter {
         final SafeExecutor<Characteristic> safeExecutor = new SafeExecutor<>(onSuccessCallback, onErrorCallback);
 
         final Subscription subscription = connection
-                .readCharacteristic(characteristic.gattCharacteristic)
+                .readCharacteristic(characteristic.getUuid())
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
