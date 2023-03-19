@@ -606,6 +606,7 @@ public class BleModule implements BleAdapter {
                                             String transactionId,
                                             OnSuccessCallback<Characteristic> onSuccessCallback,
                                             OnErrorCallback onErrorCallback) {
+        Log.v(TAG, "readCharacteristicForDevice");
         final Characteristic characteristic = getCharacteristicOrEmitError(
                 deviceIdentifier, serviceUUID, characteristicUUID, onErrorCallback);
         if (characteristic == null) {
@@ -621,6 +622,8 @@ public class BleModule implements BleAdapter {
                                              String transactionId,
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
+        Log.v(TAG, "readCharacteristicForService");
+
         final Characteristic characteristic = getCharacteristicOrEmitError(
                 serviceIdentifier, characteristicUUID, onErrorCallback);
         if (characteristic == null) {
