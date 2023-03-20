@@ -1513,6 +1513,8 @@ public class BleModule implements BleAdapter {
 
                     @Override
                     public void onError(Throwable error) {
+                        Log.v(TAG, error.getMessage());
+                        Log.v(TAG, error.getLocalizedMessage());
                         safeExecutor.error(errorConverter.toError(error));
                         pendingTransactions.removeSubscription(transactionId);
                     }
