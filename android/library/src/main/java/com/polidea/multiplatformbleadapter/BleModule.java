@@ -649,7 +649,7 @@ public class BleModule implements BleAdapter {
         Log.v(TAG, "transactionId: " + transactionId);
 
         final Characteristic characteristic = getCharacteristicOrEmitError(characteristicIdentifier, onErrorCallback);
-      
+
         Log.v(TAG, "Characteristic is :" + characteristic.toString());
 
         safeReadCharacteristicForDevice(characteristic, transactionId, onSuccessCallback, onErrorCallback);
@@ -1303,6 +1303,7 @@ public class BleModule implements BleAdapter {
                                      final OnEventCallback<ConnectionState> onConnectionStateChangedCallback,
                                      final OnErrorCallback onErrorCallback) {
 
+        Log.v(TAG, "safeConnectToDevice");
         final SafeExecutor<Device> safeExecutor = new SafeExecutor<>(onSuccessCallback, onErrorCallback);
 
         Observable<RxBleConnection> connect = device
@@ -1322,7 +1323,7 @@ public class BleModule implements BleAdapter {
                     }
                 });
 
-        if (refreshGattMoment == RefreshGattMoment.ON_CONNECTED) {
+        /*if (refreshGattMoment == RefreshGattMoment.ON_CONNECTED) {
             connect = connect.flatMap(new Func1<RxBleConnection, Observable<RxBleConnection>>() {
                 @Override
                 public Observable<RxBleConnection> call(final RxBleConnection rxBleConnection) {
@@ -1336,7 +1337,9 @@ public class BleModule implements BleAdapter {
                             });
                 }
             });
-        }
+        }*/
+        Log.v(TAG, " Build.VERSION.SDK_INT  " + Build.VERSION.SDK_INT);
+        Log.v(TAG, "connectionPriority " + connectionPriority);
 
         if (connectionPriority > 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             connect = connect.flatMap(new Func1<RxBleConnection, Observable<RxBleConnection>>() {
@@ -1349,7 +1352,7 @@ public class BleModule implements BleAdapter {
                 }
             });
         }
-
+        Log.v(TAG, "requestMtu " + requestMtu);
         if (requestMtu > 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             connect = connect.flatMap(new Func1<RxBleConnection, Observable<RxBleConnection>>() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -1366,6 +1369,8 @@ public class BleModule implements BleAdapter {
                 }
             });
         }
+
+        Log.v(TAG, "Connexion timeout " + timeout);
 
         if (timeout != null) {
             connect = connect.timeout(new Func0<Observable<Long>>() {
@@ -1399,7 +1404,8 @@ public class BleModule implements BleAdapter {
                     public void onNext(RxBleConnection connection) {
                         Device localDevice = rxBleDeviceToDeviceMapper.map(device, connection);
                         onConnectionStateChangedCallback.onEvent(ConnectionState.CONNECTED);
-                        cleanServicesAndCharacteristicsForDevice(localDevice);
+                        Log.v(TAG, "do not cleanServicesAndCharacteristicsForDevice")
+                        //cleanServicesAndCharacteristicsForDevice(localDevice);
                         connectedDevices.put(device.getMacAddress(), localDevice);
                         activeConnections.put(device.getMacAddress(), connection);
                         safeExecutor.success(localDevice);
@@ -1678,7 +1684,7 @@ public class BleModule implements BleAdapter {
         Log.v(TAG, "Converted UUIDs" + UUIDs.toString());
 
         final Device device = connectedDevices.get(deviceId);
-                Log.v(TAG, "Connected Device" + device.toString());
+        Log.v(TAG, "Connected Device" + device.toString());
 
         Log.v(TAG, "getServiceByUUID" + UUIDs[0]);
 
@@ -1689,7 +1695,7 @@ public class BleModule implements BleAdapter {
             return null;
         }
 
- Log.v(TAG, "getCharacteristicByUUID" + UUIDs[1]);
+        Log.v(TAG, "getCharacteristicByUUID" + UUIDs[1]);
         final Characteristic characteristic = service.getCharacteristicByUUID(UUIDs[1]);
         if (characteristic == null) {
             onErrorCallback.onError(BleErrorUtils.characteristicNotFound(characteristicUUID));
