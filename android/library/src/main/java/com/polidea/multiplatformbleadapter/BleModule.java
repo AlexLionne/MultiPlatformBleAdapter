@@ -1498,7 +1498,7 @@ public class BleModule implements BleAdapter {
         final SafeExecutor<Characteristic> safeExecutor = new SafeExecutor<>(onSuccessCallback, onErrorCallback);
 
         final Subscription subscription = connection
-                .readCharacteristic(characteristic.getUuid())
+                .readCharacteristic(characteristic.gattCharacteristic)
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -1681,28 +1681,37 @@ public class BleModule implements BleAdapter {
         Log.v(TAG, "Device id" + deviceId);
         Log.v(TAG, "Service" + serviceUUID);
         Log.v(TAG, "Characteristic" + characteristicUUID);
-        Log.v(TAG, "Converted UUIDs" + UUIDs.toString());
+
+        if ((UUIDs != null ? UUIDs.length : 0) > 0) {
+            Log.v(TAG, "Converted UUIDs" + Arrays.toString(UUIDs));
+        }
 
         final Device device = connectedDevices.get(deviceId);
-        Log.v(TAG, "Connected Device" + device.toString());
+        Log.v(TAG, "Connected Device" + device);
 
-        Log.v(TAG, "getServiceByUUID" + UUIDs[0]);
+        if ((UUIDs != null ? UUIDs.length : 0) > 0) {
+            Log.v(TAG, "getServiceByUUID" + UUIDs[0]);
+        }
 
-        final Service service = device.getServiceByUUID(UUIDs[0]);
+        if (device != null && (UUIDs != null ? UUIDs.length : 0) > 0) {
+            final Service service = device.getServiceByUUID(UUIDs[0]);
 
-        if (service == null) {
+            if (service == null) {
+                onErrorCallback.onError(BleErrorUtils.serviceNotFound(serviceUUID));
+                return null;
+            }
+            Log.v(TAG, "getCharacteristicByUUID" + UUIDs[1]);
+            final Characteristic characteristic = service.getCharacteristicByUUID(UUIDs[1]);
+            if (characteristic == null) {
+                onErrorCallback.onError(BleErrorUtils.characteristicNotFound(characteristicUUID));
+                return null;
+            }
+            return characteristic;
+
+        } else {
             onErrorCallback.onError(BleErrorUtils.serviceNotFound(serviceUUID));
             return null;
         }
-
-        Log.v(TAG, "getCharacteristicByUUID" + UUIDs[1]);
-        final Characteristic characteristic = service.getCharacteristicByUUID(UUIDs[1]);
-        if (characteristic == null) {
-            onErrorCallback.onError(BleErrorUtils.characteristicNotFound(characteristicUUID));
-            return null;
-        }
-
-        return characteristic;
     }
 
     @Nullable
