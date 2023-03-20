@@ -42,7 +42,11 @@ public class Service {
     @Nullable
     public Characteristic getCharacteristicByUUID(@NonNull UUID uuid) {
         BluetoothGattCharacteristic characteristic = btGattService.getCharacteristic(uuid);
-        Log.v(TAG, "BluetoothGattCharacteristic" + characteristic.toString());
+        if (characteristic != null) {
+            Log.v(TAG, "char" + uuid);
+            Log.v(TAG, "BluetoothGattCharacteristic" + characteristic);
+            Log.v(TAG, "btGattService" + btGattService);
+        }
 
         return new Characteristic(this, characteristic);
     }
