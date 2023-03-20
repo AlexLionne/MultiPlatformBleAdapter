@@ -52,7 +52,7 @@ public class Characteristic {
         serviceUUID = other.serviceUUID;
         deviceID = other.deviceID;
         if (other.value != null) value = other.value.clone();
-        gattCharacteristic = other.gattCharacteristic;
+        this.gattCharacteristic = other.gattCharacteristic;
     }
 
     public int getId() {
@@ -60,59 +60,59 @@ public class Characteristic {
     }
 
     public UUID getUuid() {
-        return gattCharacteristic.getUuid();
+        return this.gattCharacteristic.getUuid();
     }
 
     public int getServiceID() {
-        return serviceID;
+        return this.serviceID;
     }
 
     public UUID getServiceUUID() {
-        return serviceUUID;
+        return this.serviceUUID;
     }
 
     public String getDeviceId() {
-        return deviceID;
+        return this.deviceID;
     }
 
     public int getInstanceId() {
-        return gattCharacteristic.getInstanceId();
+        return this.gattCharacteristic.getInstanceId();
     }
 
     public BluetoothGattDescriptor getGattDescriptor(UUID uuid) {
-        return gattCharacteristic.getDescriptor(uuid);
+        return this.gattCharacteristic.getDescriptor(uuid);
     }
 
     public void setWriteType(int writeType) {
-        gattCharacteristic.setWriteType(writeType);
+        this.gattCharacteristic.setWriteType(writeType);
     }
 
     public boolean isReadable() {
-        return (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0;
+        return (this.gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0;
     }
 
     public boolean isWritableWithResponse() {
-        return (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0;
+        return (this.gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0;
     }
 
     public boolean isWritableWithoutResponse() {
-        return (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0;
+        return (this.gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0;
     }
 
     public boolean isNotifiable() {
-        return (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
+        return (this.gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
     }
 
     public List<Descriptor> getDescriptors() {
-        ArrayList<Descriptor> descriptors = new ArrayList<>(gattCharacteristic.getDescriptors().size());
-        for (BluetoothGattDescriptor gattDescriptor : gattCharacteristic.getDescriptors()) {
+        ArrayList<Descriptor> descriptors = new ArrayList<>(this.gattCharacteristic.getDescriptors().size());
+        for (BluetoothGattDescriptor gattDescriptor : this.gattCharacteristic.getDescriptors()) {
             descriptors.add(new Descriptor(this, gattDescriptor));
         }
         return descriptors;
     }
 
     public boolean isNotifying() {
-        BluetoothGattDescriptor descriptor = gattCharacteristic.getDescriptor(Constants.CLIENT_CHARACTERISTIC_CONFIG_UUID);
+        BluetoothGattDescriptor descriptor = this.gattCharacteristic.getDescriptor(Constants.CLIENT_CHARACTERISTIC_CONFIG_UUID);
         boolean isNotifying = false;
         if (descriptor != null) {
             byte[] descriptorValue = descriptor.getValue();
@@ -124,7 +124,7 @@ public class Characteristic {
     }
 
     public boolean isIndicatable() {
-        return (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0;
+        return (this.gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0;
     }
 
     public byte[] getValue() {
@@ -140,11 +140,11 @@ public class Characteristic {
 
     void logValue(String message, byte[] value) {
         if (value == null) {
-            value = gattCharacteristic.getValue();
+            value = this.gattCharacteristic.getValue();
         }
         String hexValue = value != null ? ByteUtils.bytesToHex(value) : "(null)";
         RxBleLog.v(message +
-                " Characteristic(uuid: " + gattCharacteristic.getUuid().toString() +
+                " Characteristic(uuid: " + this.gattCharacteristic.getUuid().toString() +
                 ", id: " + id +
                 ", value: " + hexValue + ")");
     }

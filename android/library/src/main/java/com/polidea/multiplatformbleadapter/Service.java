@@ -28,11 +28,11 @@ public class Service {
     }
 
     public UUID getUuid() {
-        return btGattService.getUuid();
+        return this.btGattService.getUuid();
     }
 
     public String getDeviceID() {
-        return deviceID;
+        return this.deviceID;
     }
 
     public boolean isPrimary() {
@@ -41,11 +41,11 @@ public class Service {
 
     @Nullable
     public Characteristic getCharacteristicByUUID(@NonNull UUID uuid) {
-        BluetoothGattCharacteristic characteristic = btGattService.getCharacteristic(uuid);
+        BluetoothGattCharacteristic characteristic = this.btGattService.getCharacteristic(uuid);
         if (characteristic != null) {
             Log.v(TAG, "char" + uuid);
             Log.v(TAG, "BluetoothGattCharacteristic" + characteristic);
-            Log.v(TAG, "btGattService" + btGattService);
+            Log.v(TAG, "btGattService" + this.btGattService);
         }
 
         if (characteristic == null) return null;
@@ -54,8 +54,8 @@ public class Service {
     }
 
     public List<Characteristic> getCharacteristics() {
-        ArrayList<Characteristic> characteristics = new ArrayList<>(btGattService.getCharacteristics().size());
-        for (BluetoothGattCharacteristic gattCharacteristic : btGattService.getCharacteristics()) {
+        ArrayList<Characteristic> characteristics = new ArrayList<>(this.btGattService.getCharacteristics().size());
+        for (BluetoothGattCharacteristic gattCharacteristic : this.btGattService.getCharacteristics()) {
             characteristics.add(new Characteristic(this, gattCharacteristic));
         }
         return characteristics;

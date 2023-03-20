@@ -1599,7 +1599,7 @@ public class BleModule implements BleAdapter {
                     }
                 });
 
-        pendingTransactions.replaceSubscription(transactionId, subscription);
+        this.pendingTransactions.replaceSubscription(transactionId, subscription);
     }
 
     private void safeMonitorCharacteristicForDevice(final Characteristic characteristic,
