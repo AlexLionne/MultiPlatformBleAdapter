@@ -1404,7 +1404,7 @@ public class BleModule implements BleAdapter {
                     public void onNext(RxBleConnection connection) {
                         Device localDevice = rxBleDeviceToDeviceMapper.map(device, connection);
                         onConnectionStateChangedCallback.onEvent(ConnectionState.CONNECTED);
-                        Log.v(TAG, "do not cleanServicesAndCharacteristicsForDevice")
+                        Log.v(TAG, "do not cleanServicesAndCharacteristicsForDevice");
                         //cleanServicesAndCharacteristicsForDevice(localDevice);
                         connectedDevices.put(device.getMacAddress(), localDevice);
                         activeConnections.put(device.getMacAddress(), connection);
