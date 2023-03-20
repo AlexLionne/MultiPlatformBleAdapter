@@ -1323,7 +1323,7 @@ public class BleModule implements BleAdapter {
                     }
                 });
 
-        /*if (refreshGattMoment == RefreshGattMoment.ON_CONNECTED) {
+        if (refreshGattMoment == RefreshGattMoment.ON_CONNECTED) {
             connect = connect.flatMap(new Func1<RxBleConnection, Observable<RxBleConnection>>() {
                 @Override
                 public Observable<RxBleConnection> call(final RxBleConnection rxBleConnection) {
@@ -1337,7 +1337,7 @@ public class BleModule implements BleAdapter {
                             });
                 }
             });
-        }*/
+        }
         Log.v(TAG, " Build.VERSION.SDK_INT  " + Build.VERSION.SDK_INT);
         Log.v(TAG, "connectionPriority " + connectionPriority);
 
@@ -1404,8 +1404,7 @@ public class BleModule implements BleAdapter {
                     public void onNext(RxBleConnection connection) {
                         Device localDevice = rxBleDeviceToDeviceMapper.map(device, connection);
                         onConnectionStateChangedCallback.onEvent(ConnectionState.CONNECTED);
-                        Log.v(TAG, "do not cleanServicesAndCharacteristicsForDevice");
-                        //cleanServicesAndCharacteristicsForDevice(localDevice);
+                        cleanServicesAndCharacteristicsForDevice(localDevice);
                         connectedDevices.put(device.getMacAddress(), localDevice);
                         activeConnections.put(device.getMacAddress(), connection);
                         safeExecutor.success(localDevice);

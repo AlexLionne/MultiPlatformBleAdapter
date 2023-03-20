@@ -48,6 +48,8 @@ public class Service {
             Log.v(TAG, "btGattService" + btGattService);
         }
 
+        if (characteristic == null) return null;
+
         return new Characteristic(this, characteristic);
     }
 
